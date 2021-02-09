@@ -3,12 +3,12 @@ const scrapping = require("./middleware/scrapping");
 
 let scrap = null;
 
-bot.on("message", (mensaje) => {
+bot.on("message", async (mensaje) => {
   let msg = mensaje.content;
 
   if (msg === "!start" && scrap == null) {
     mensaje.channel.send("Empezó el bot");
-    scrap = setInterval(scrapping.create(mensaje), 3000);
+    scrap = setInterval(await scrapping.is_stock(mensaje), 180000);
   }
 
   if (msg === "!stop") {
