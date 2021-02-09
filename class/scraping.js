@@ -1,8 +1,9 @@
 const cheerio = require("cheerio");
 const puppeteer = require("puppeteer");
-const bot = require("../config/bot");
 
 class Scraping {
+  aux = [];
+
   async getProducts() {
     const browser = await puppeteer.launch({
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
@@ -10,7 +11,7 @@ class Scraping {
     const page = await browser.newPage();
 
     await page.goto(
-      "https://www.milanuncios.com/anuncios/bmw.htm?fromSearch=1&fromSuggester=1"
+      "https://www.innvictus.com/tenis-para-hombre/c/100010002000000000"
     );
     await page.waitForSelector("div.is-pw__products", {
       timeout: 1000,
@@ -20,12 +21,16 @@ class Scraping {
       return document.querySelector("body").innerHTML;
     });
     var $ = cheerio.load(body);
-    let aux = [];
 
-    $("div.is-pw__product").each((i) => {
-      aux.push(i);
+    $("div.is-pw__product").each((i, elements) => {
+      link = $(elements).find("a.js-gtm-product-click").attr("href");
+      productCode = $(elements)
+        .find("a.js-gtm-product-click")
+        .attr("data-productcode");
+
+      this.aux.push(i, link, productCode);
     });
 
-    return aux.length;
+    return this.aux.length;
   }
 }
